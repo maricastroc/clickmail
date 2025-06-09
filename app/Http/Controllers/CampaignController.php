@@ -44,6 +44,10 @@ class CampaignController extends Controller
             ->orderBy('id', 'asc')
             ->paginate(10);
 
+                    if ($request->expectsJson()) {
+            return response()->json($campaigns);
+        }
+
         return Inertia::render('Dashboard/Index', [
             'campaigns' => $campaigns,
         ]);

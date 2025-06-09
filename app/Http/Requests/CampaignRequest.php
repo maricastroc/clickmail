@@ -18,6 +18,12 @@ class CampaignRequest extends FormRequest
         $rules = [];
 
         $step = $this->input('step');
+
+        if (!in_array($step, [1, 2, 3])) {
+            return [
+                'step' => ['required', Rule::in([1, 2, 3])],
+            ];
+        }
         
         if ($step == 1) {
             $rules = [
@@ -74,13 +80,16 @@ class CampaignRequest extends FormRequest
                 'track_click' => ['required', 'boolean'],
                 'track_open' => ['required', 'boolean'],
                 'body' => ['required'],
-                'send_at' => [
+            ];
+
+            if ($this->input('draft_mode') === false || $this->input('draft_mode') === 'false') {
+                $rules['send_at'] = [
                     'required',
                     'date',
                     'after_or_equal:' . Carbon::now('America/Sao_Paulo')->toDateTimeString(),
-                ],
-                'customize_send_at' => ['required', 'boolean'],
-            ];
+                ];
+                $rules['customize_send_at'] = ['required', 'boolean'];
+            }
         }
 
         return $rules;

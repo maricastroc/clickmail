@@ -19,6 +19,12 @@ class UpdateCampaignRequest extends FormRequest
 
         $step = $this->input('step');
 
+        if (!in_array($step, [1, 2, 3])) {
+            return [
+                'step' => ['required', Rule::in([1, 2, 3])],
+            ];
+        }
+
         if ($step == 1) {
             $rules = [
                 'name' => [
