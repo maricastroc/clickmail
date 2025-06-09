@@ -94,7 +94,14 @@ class CampaignController extends Controller
                     try {
                         $campaign->update(['status' => Campaign::STATUS_SCHEDULED]);
 
-                        SendEmailsCampaignJob::dispatch($campaign)->delay($data['send_at']);
+                        $sendAt = $data['send_at'];
+                        $now = now()->setTimezone('America/Sao_Paulo');
+
+                        if ($sendAt->greaterThan($now)) {
+                            SendEmailsCampaignJob::dispatch($campaign)->delay($sendAt);
+                        } else {
+                            SendEmailsCampaignJob::dispatch($campaign);
+                        }
     
                         return response()->json([
                             'message' => 'Emails sent successfully!',

@@ -130,7 +130,7 @@ test('I should be able to create a campaign draft', function () {
     $this->assertDatabaseHas('campaigns', ['name' => $payload['name']]);
 });
 
-test('I should be able to schedule a campaign to send', function () {
+test('I should be able to schedule a campaign to send in the future', function () {
     Bus::fake();
 
     $payload = Campaign::factory()->make([
@@ -145,7 +145,35 @@ test('I should be able to schedule a campaign to send', function () {
     $response->assertStatus(200);
 
     Bus::assertDispatched(SendEmailsCampaignJob::class, function ($job) use ($payload) {
-        return $job->campaign->name === $payload['name'];
+        $sendAt = \Carbon\Carbon::parse($payload['send_at']);
+
+        if ($job->delay instanceof \DateTimeInterface) {
+            return $job->delay->getTimestamp() === $sendAt->getTimestamp();
+        } elseif (is_int($job->delay)) {
+            $expectedDelay = $sendAt->diffInSeconds(now());
+            return abs($job->delay - $expectedDelay) < 5;
+        }
+
+        return false;
+    });
+});
+
+test('I should be able to send a campaign immediately', function () {
+    Bus::fake();
+
+    $payload = Campaign::factory()->make([
+        'draft_mode' => false,
+        'step' => 3,
+        'send_at' => now()->toDateTimeString(),
+        'customize_send_at' => true,
+    ])->toArray();
+
+    $response = $this->postJson(route('campaigns.store'), $payload);
+
+    $response->assertStatus(200);
+
+    Bus::assertDispatched(SendEmailsCampaignJob::class, function ($job) {
+        return $job->delay === null || $job->delay === 0;
     });
 });
 
@@ -155,7 +183,7 @@ test('I should be able to update a campaign draft', function () {
     $emailList = \App\Models\EmailList::factory()->create(['user_id' => $this->user->id]);
     $template = \App\Models\Template::factory()->create(['user_id' => $this->user->id]);
 
-$response = $this->putJson(route('campaigns.update', $campaign->id), [
+    $response = $this->putJson(route('campaigns.update', $campaign->id), [
         'name' => 'Updated Campaign',
         'subject' => 'Updated Subject',
         'email_list_id' => $emailList->id,
