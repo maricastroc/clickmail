@@ -24,6 +24,11 @@ class CampaignStatisticsController extends Controller
 
         $statistics = $this->calculateStatistics($campaign);
 
+        if ($request->expectsJson()) {
+            return response()->json($statistics);
+        }
+
+
         return Inertia::render('Dashboard/Show/Index', [
             'campaign' => $campaign,
             'campaignMails' => $campaignMails,

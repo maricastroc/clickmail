@@ -1,17 +1,20 @@
 <?php
 
+use App\Models\Subscriber;
 use App\Models\EmailList;
 use App\Models\Template;
 use App\Models\User;
 use App\Models\Campaign;
+use App\Models\CampaignMail;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\SendEmailsCampaignJob;
+use App\Mail\EmailCampaign;
 
 beforeEach(function () {
-  $this->user = User::factory()->create();
-  $this->actingAs($this->user);
+    $this->user = User::factory()->create();
+    $this->actingAs($this->user);
 });
 
 test('I should be able to get all my user campaigns', function () {
@@ -180,8 +183,8 @@ test('I should be able to send a campaign immediately', function () {
 test('I should be able to update a campaign draft', function () {
     $campaign = Campaign::factory()->create(['user_id' => $this->user->id, 'deleted_at' => null]);
 
-    $emailList = \App\Models\EmailList::factory()->create(['user_id' => $this->user->id]);
-    $template = \App\Models\Template::factory()->create(['user_id' => $this->user->id]);
+    $emailList = EmailList::factory()->create(['user_id' => $this->user->id]);
+    $template = Template::factory()->create(['user_id' => $this->user->id]);
 
     $response = $this->putJson(route('campaigns.update', $campaign->id), [
         'name' => 'Updated Campaign',
@@ -279,13 +282,13 @@ test('I should not be able to create a campaign without a valid step', function 
     $response = $this->postJson(route('campaigns.store'), $payload);
 
     $response->assertStatus(422)
-      ->assertJsonValidationErrors(['step']);
+        ->assertJsonValidationErrors(['step']);
 });
 
 test('I should be able to create a campaign without step 1 valid data on draft mode', function () {
     $payload = [
-      'step' => 1,
-      'draft_mode' => true
+        'step' => 1,
+        'draft_mode' => true
     ];
 
     $response = $this->postJson(route('campaigns.store'), $payload);
@@ -327,8 +330,8 @@ test('I should not be able to create a campaign without step 2 valid data', func
 });
 
 test('I should not be able to create a campaign without step 3 valid data on draft mode', function () {
-    $emailList = \App\Models\EmailList::factory()->create();
-    $template = \App\Models\Template::factory()->create();
+    $emailList = EmailList::factory()->create();
+    $template = Template::factory()->create();
 
     $payload = [
         'step' => 3,
@@ -348,8 +351,8 @@ test('I should not be able to create a campaign without step 3 valid data on dra
 });
 
 test('I should not be able to create a campaign without step 3 valid data', function () {
-    $emailList = \App\Models\EmailList::factory()->create();
-    $template = \App\Models\Template::factory()->create();
+    $emailList = EmailList::factory()->create();
+    $template = Template::factory()->create();
 
     $payload = [
         'step' => 3,
@@ -367,4 +370,113 @@ test('I should not be able to create a campaign without step 3 valid data', func
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['send_at', 'customize_send_at']);
+});
+
+test('Links on the body should be replaced with the tracking line', function () {
+    $emailList = EmailList::factory()->create();
+    $subscriber = Subscriber::factory()->create(['email_list_id' => $emailList->id]);
+    
+    $template = Template::factory()->create([
+        'body' => '<div>Hello, world! <a href="http://www.google.com">Click here</a> </div>'
+    ]);
+
+    $campaign = Campaign::factory()->create([
+        'email_list_id' => $emailList->id,
+        'template_id' => $template->id,
+        'body' => $template->body, 
+        'send_at' => now()->addDays(2)->format('Y-m-d'),
+        'track_click' => true,
+        'user_id' => $this->user->id
+    ]);
+
+    $mail = CampaignMail::create([
+        'campaign_id' => $campaign->id, 
+        'subscriber_id' => $subscriber->id, 
+        'send_at' => $campaign->send_at
+    ]);
+
+    $renderedMail = (new EmailCampaign($campaign, $mail))->render();
+
+    $pattern = '/href="([^"]*)"/';
+    preg_match_all($pattern, $renderedMail, $matches);
+
+    $expectedUrl = route('tracking.clicks', ['mail' => $mail, 'url' => 'http://www.google.com']);
+
+    foreach ($matches[1] as $index => $value) {
+    if (!str_contains($value, '/track/click/')) {
+        continue;
+    }
+    expect($value)->toBe(route('tracking.clicks', ['mail' => $mail, 'url' => 'http://www.google.com']));
+}
+});
+
+test('Tracking click increments count and redirects', function () {
+    $this->withoutExceptionHandling();
+    
+    $campaign = Campaign::factory()->create(['track_click' => true, 'deleted_at' => null]);
+    $campaignMail = CampaignMail::factory()->create([
+        'clicks' => 0,
+        'campaign_id' => $campaign->id
+    ]);
+
+    $campaignMail->load('campaign');
+
+    $originalUrl = 'http://www.google.com';
+    $response = $this->get(route('tracking.clicks', ['mail' => $campaignMail->id, 'url' => $originalUrl]));
+
+    expect($campaignMail->refresh()->clicks)->toBe(1);
+    $response->assertRedirect($originalUrl);
+});
+
+test('Tracking click does not increment if track_click is disabled', function () {
+    $this->withoutExceptionHandling();
+    
+    $campaign = Campaign::factory()->create(['track_click' => false, 'deleted_at' => null]);
+    $campaignMail = CampaignMail::factory()->create([
+        'clicks' => 0,
+        'campaign_id' => $campaign->id
+    ]);
+
+    $campaignMail->load('campaign');
+
+    $originalUrl = 'http://www.google.com';
+    $response = $this->get(route('tracking.clicks', ['mail' => $campaignMail->id, 'url' => $originalUrl]));
+
+    expect($campaignMail->refresh()->clicks)->toBe(0);
+});
+
+test('Tracking opening increments count', function () {
+    $this->withoutExceptionHandling();
+    
+    $campaign = Campaign::factory()->create(['track_open' => true, 'deleted_at' => null]);
+    $campaignMail = CampaignMail::factory()->create([
+        'campaign_id' => $campaign->id,
+        'opens' => 0
+    ]);
+
+    $campaignMail->load('campaign');
+
+    $response = $this->get(route('tracking.openings', ['mail' => $campaignMail]));
+
+    expect($campaignMail->refresh()->opens)->toBe(1);
+    $response->assertStatus(200)
+        ->assertHeader('Content-Type', 'image/gif');
+});
+
+test('Tracking opening does not increment if tracking is disabled', function () {
+    $this->withoutExceptionHandling();
+    
+    $campaign = Campaign::factory()->create(['track_open' => false, 'deleted_at' => null]);
+
+    $campaignMail = CampaignMail::factory()->create([
+        'campaign_id' => $campaign->id,
+        'opens' => 0,
+        'deleted_at' => null
+    ]);
+
+        $campaignMail->load('campaign');
+
+    $response = $this->get(route('tracking.openings', ['mail' => $campaignMail]));
+
+    expect($campaignMail->refresh()->opens)->toBe(0);
 });

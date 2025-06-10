@@ -44,7 +44,7 @@ class CampaignController extends Controller
             ->orderBy('id', 'asc')
             ->paginate(10);
 
-                    if ($request->expectsJson()) {
+        if ($request->expectsJson()) {
             return response()->json($campaigns);
         }
 
