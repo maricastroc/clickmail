@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Seeders;
 
 use App\Models\Campaign;
@@ -17,9 +19,9 @@ class CampaignMailSeeder extends Seeder
             ->each(function (Campaign $campaign) {
                 foreach ($campaign->emailList->subscribers as $subscriber) {
                     CampaignMail::factory()->create([
-                        'campaign_id' => $campaign->id,
+                        'campaign_id'   => $campaign->id,
                         'subscriber_id' => $subscriber->id,
-                        'send_at' => $campaign->send_at,
+                        'send_at'       => $campaign->send_at,
                     ]);
                 }
             });

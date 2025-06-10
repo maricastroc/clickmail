@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Factories;
 
 use App\Models\User;
@@ -18,7 +20,7 @@ class EmailListFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake('en_US')->words(3, true),
+            'title'   => fake('en_US')->words(3, true),
             'user_id' => User::factory(),
         ];
     }

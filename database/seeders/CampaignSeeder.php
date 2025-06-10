@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Seeders;
 
 use App\Models\Campaign;
@@ -17,14 +19,14 @@ class CampaignSeeder extends Seeder
     {
         for ($i = 0; $i < 3; $i++) {
             $emailList = EmailList::query()->inRandomOrder()->first();
-            $template = Template::query()->inRandomOrder()->first();
-            $user = User::query()->first();
+            $template  = Template::query()->inRandomOrder()->first();
+            $user      = User::query()->first();
 
             Campaign::factory()->create([
-                'template_id' => $template->id,
+                'template_id'   => $template->id,
                 'email_list_id' => $emailList->id,
-                'user_id' => $user->id,
-                'deleted_at' => null,
+                'user_id'       => $user->id,
+                'deleted_at'    => null,
             ]);
         }
     }

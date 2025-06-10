@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CampaignRequest;
@@ -29,7 +31,7 @@ class CampaignController extends Controller
 
         $this->authorize('viewAny', Campaign::class);
 
-        $search = $request->query('search', '');
+        $search      = $request->query('search', '');
         $withTrashed = $request->query('withTrashed', false);
 
         $campaignsQuery = $user->campaigns()
@@ -63,11 +65,11 @@ class CampaignController extends Controller
         $user = $request->user();
 
         $emailLists = $user->emailLists()->with('subscribers')->get();
-        $templates = $user->templates()->with('user:id,name,email')->get();
+        $templates  = $user->templates()->with('user:id,name,email')->get();
 
         return Inertia::render('Dashboard/Form', [
             'emailLists' => $emailLists,
-            'templates' => $templates,
+            'templates'  => $templates,
         ]);
     }
 
@@ -95,7 +97,7 @@ class CampaignController extends Controller
                         $campaign->update(['status' => Campaign::STATUS_SCHEDULED]);
 
                         $sendAt = $data['send_at'];
-                        $now = now()->setTimezone('America/Sao_Paulo');
+                        $now    = now()->setTimezone('America/Sao_Paulo');
 
                         if ($sendAt->greaterThan($now)) {
                             SendEmailsCampaignJob::dispatch($campaign)->delay($sendAt);
@@ -120,7 +122,7 @@ class CampaignController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create campaign. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -132,7 +134,7 @@ class CampaignController extends Controller
     {
         $this->authorize('show', $campaign);
 
-        $search = $request->query('search', '');
+        $search      = $request->query('search', '');
         $withTrashed = $request->query('withTrashed', false);
 
         $campaignsQuery = $campaign->subscribers();
@@ -160,13 +162,13 @@ class CampaignController extends Controller
         $user = $request->user();
 
         $emailLists = $user->emailLists()->with('subscribers')->get();
-        $templates = $user->templates()->with('user:id,name,email')->get();
+        $templates  = $user->templates()->with('user:id,name,email')->get();
 
         return Inertia::render('Dashboard/Form', [
-            'campaign' => $campaign,
+            'campaign'   => $campaign,
             'emailLists' => $emailLists,
-            'templates' => $templates,
-            'isEdit' => true,
+            'templates'  => $templates,
+            'isEdit'     => true,
         ]);
     }
 
@@ -208,7 +210,7 @@ class CampaignController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to update campaign. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -229,7 +231,7 @@ class CampaignController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete campaign. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -259,7 +261,7 @@ class CampaignController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to restore campaign. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

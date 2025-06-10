@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EmailListRequest;
@@ -19,7 +21,7 @@ class EmailListController extends Controller
 
         $user = $request->user();
 
-        $search = $request->query('search', '');
+        $search      = $request->query('search', '');
         $withTrashed = $request->query('withTrashed', false);
 
         $emailListsQuery = $user->emailLists()
@@ -66,12 +68,12 @@ class EmailListController extends Controller
 
             return response()->json([
                 'message' => 'List successfully created!',
-                'data' => $emailList,
+                'data'    => $emailList,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create list. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -83,7 +85,7 @@ class EmailListController extends Controller
     {
         $this->authorize('view', $list);
 
-        $search = $request->query('search', '');
+        $search      = $request->query('search', '');
         $withTrashed = $request->query('withTrashed', false);
 
         $subscribersQuery = $list->subscribers();
@@ -101,7 +103,7 @@ class EmailListController extends Controller
         }
 
         return Inertia::render('EmailLists/Show', [
-            'emailList' => $list,
+            'emailList'   => $list,
             'subscribers' => $subscribers,
         ]);
     }
@@ -115,7 +117,7 @@ class EmailListController extends Controller
 
         return Inertia::render('EmailLists/Form', [
             'emailList' => $list,
-            'isEdit' => true,
+            'isEdit'    => true,
         ]);
     }
 
@@ -132,12 +134,12 @@ class EmailListController extends Controller
 
             return response()->json([
                 'message' => 'List successfully updated!',
-                'list' => $list,
+                'list'    => $list,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while updating the list.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -158,7 +160,7 @@ class EmailListController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete list. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -188,7 +190,7 @@ class EmailListController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to restore list. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

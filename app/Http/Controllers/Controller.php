@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use Barryvdh\Debugbar\Controllers\BaseController;
@@ -8,5 +10,6 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, ValidatesRequests;
+    use AuthorizesRequests;
+    use ValidatesRequests;
 }

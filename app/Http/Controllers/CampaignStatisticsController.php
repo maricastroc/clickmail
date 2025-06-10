@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
@@ -29,9 +31,9 @@ class CampaignStatisticsController extends Controller
         }
 
         return Inertia::render('Dashboard/Show/Index', [
-            'campaign' => $campaign,
+            'campaign'      => $campaign,
             'campaignMails' => $campaignMails,
-            'statistics' => $statistics,
+            'statistics'    => $statistics,
         ]);
     }
 
@@ -39,23 +41,23 @@ class CampaignStatisticsController extends Controller
     {
         $totalEmails = $campaign->mails()->count();
 
-        $totalOpens = $campaign->mails()->sum('opens');
+        $totalOpens  = $campaign->mails()->sum('opens');
         $totalClicks = $campaign->mails()->sum('clicks');
 
-        $uniqueOpens = $this->calculateUnique($campaign, 'opens');
+        $uniqueOpens  = $this->calculateUnique($campaign, 'opens');
         $uniqueClicks = $this->calculateUnique($campaign, 'clicks');
 
-        $openRate = $totalEmails > 0 ? ($uniqueOpens / $totalEmails) * 100 : 0;
+        $openRate  = $totalEmails > 0 ? ($uniqueOpens / $totalEmails) * 100 : 0;
         $clickRate = $totalEmails > 0 ? ($uniqueClicks / $totalEmails) * 100 : 0;
 
         return [
-            'total_emails' => $totalEmails,
-            'total_opens' => $totalOpens,
-            'total_clicks' => $totalClicks,
-            'unique_opens' => $uniqueOpens,
+            'total_emails'  => $totalEmails,
+            'total_opens'   => $totalOpens,
+            'total_clicks'  => $totalClicks,
+            'unique_opens'  => $uniqueOpens,
             'unique_clicks' => $uniqueClicks,
-            'open_rate' => number_format($openRate, 2).'%',
-            'click_rate' => number_format($clickRate, 2).'%',
+            'open_rate'     => number_format($openRate, 2) . '%',
+            'click_rate'    => number_format($clickRate, 2) . '%',
         ];
     }
 

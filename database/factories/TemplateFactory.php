@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Factories;
 
 use App\Models\User;
@@ -18,8 +20,8 @@ class TemplateFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->sentence(),
-            'body' => fake()->randomHtml,
+            'name'    => fake()->sentence(),
+            'body'    => fake()->randomHtml,
             'user_id' => User::factory(),
         ];
     }

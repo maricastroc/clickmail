@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Jobs;
 
 use App\Mail\EmailCampaign;
@@ -14,20 +16,22 @@ use Illuminate\Support\Facades\Mail;
 
 class SendEmailCampaignJob implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public function __construct(
         public Campaign $campaign,
         public Subscriber $subscriber
-    ) {}
+    ) {
+    }
 
     public function handle(): void
     {
         try {
             $mail = CampaignMail::create([
-                'campaign_id' => $this->campaign->id,
+                'campaign_id'   => $this->campaign->id,
                 'subscriber_id' => $this->subscriber->id,
-                'send_at' => $this->campaign->send_at,
+                'send_at'       => $this->campaign->send_at,
             ]);
 
             if ($mail) {
@@ -37,7 +41,6 @@ class SendEmailCampaignJob implements ShouldQueue
             }
 
             Mail::to($this->subscriber->email)->send(new EmailCampaign($this->campaign, $mail));
-
         } catch (\Exception $e) {
             Log::error("Failed to send email to {$this->subscriber->email}: {$e->getMessage()}");
         }

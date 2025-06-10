@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 return [
 
     /*
@@ -32,13 +34,13 @@ return [
     'stores' => [
 
         'array' => [
-            'driver' => 'array',
+            'driver'    => 'array',
             'serialize' => false,
         ],
 
         'file' => [
-            'driver' => 'file',
-            'path' => storage_path('framework/cache/data'),
+            'driver'    => 'file',
+            'path'      => storage_path('framework/cache/data'),
             'lock_path' => storage_path('framework/cache/data'),
         ],
 

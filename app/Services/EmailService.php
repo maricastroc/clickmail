@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Services;
 
 use App\Mail\EmailCampaign;
@@ -10,7 +12,7 @@ class EmailService
     public function sendCampaignEmails($campaign)
     {
         $emailList = $campaign->emailList;
-        $mail = $campaign->mails()->first();
+        $mail      = $campaign->mails()->first();
 
         if ($emailList && $emailList->subscribers) {
             foreach ($emailList->subscribers as $subscriber) {

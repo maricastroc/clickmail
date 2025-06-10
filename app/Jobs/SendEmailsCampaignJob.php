@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Jobs;
 
 use App\Models\Campaign;
@@ -10,9 +12,12 @@ use Illuminate\Support\Facades\Log;
 
 class SendEmailsCampaignJob implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
-    public function __construct(public Campaign $campaign) {}
+    public function __construct(public Campaign $campaign)
+    {
+    }
 
     public function handle(): void
     {
@@ -44,7 +49,7 @@ class SendEmailsCampaignJob implements ShouldQueue
             $this->campaign->update(['status' => Campaign::STATUS_SENT]);
             Log::info('Campaign status updated.', [
                 'campaign_id' => $this->campaign->id,
-                'new_status' => $this->campaign->status,
+                'new_status'  => $this->campaign->status,
             ]);
         } catch (\Exception $e) {
             Log::error("Failed to update campaign status to 'sent': {$e->getMessage()}");

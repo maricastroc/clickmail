@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,11 +16,11 @@ class Campaign extends Model
 
     use SoftDeletes;
 
-    const STATUS_DRAFT = 'draft';
+    public const STATUS_DRAFT = 'draft';
 
-    const STATUS_SCHEDULED = 'scheduled';
+    public const STATUS_SCHEDULED = 'scheduled';
 
-    const STATUS_SENT = 'sent';
+    public const STATUS_SENT = 'sent';
 
     /**
      * The attributes that are mass assignable.
@@ -41,7 +43,7 @@ class Campaign extends Model
 
     protected $casts = [
         'customize_send_at' => 'boolean',
-        'send_at' => 'datetime',
+        'send_at'           => 'datetime',
     ];
 
     protected static function boot()

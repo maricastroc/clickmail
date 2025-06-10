@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use App\Models\EmailList;
 use App\Models\User;
 use Illuminate\Http\Response;
@@ -15,7 +17,7 @@ beforeEach(function () {
 
 test('I should be able to create a list', function () {
     $response = $this->postJson(route('lists.store'), [
-        'title' => 'Email List Title',
+        'title'    => 'Email List Title',
         'listFile' => UploadedFile::fake()->createWithContent(
             'sample_names.csv',
             <<<'CSV'
@@ -29,14 +31,14 @@ test('I should be able to create a list', function () {
 
     $this->assertDatabaseHas('subscribers', [
         'email_list_id' => 1,
-        'name' => 'jon doe',
-        'email' => 'jondoe@gmail.com',
+        'name'          => 'jon doe',
+        'email'         => 'jondoe@gmail.com',
     ]);
 });
 
 test('I should be able to update a list', function () {
     $response = $this->postJson(route('lists.store'), [
-        'title' => 'Email List Title',
+        'title'    => 'Email List Title',
         'listFile' => UploadedFile::fake()->createWithContent(
             'sample_names.csv',
             <<<'CSV'
@@ -57,20 +59,20 @@ test('I should be able to update a list', function () {
     $response->assertStatus(Response::HTTP_OK);
 
     $this->assertDatabaseHas('email_lists', [
-        'id' => $emailList->id,
+        'id'    => $emailList->id,
         'title' => 'Updated Email List Title',
     ]);
 
     $this->assertDatabaseHas('subscribers', [
         'email_list_id' => $emailList->id,
-        'name' => 'jon doe',
-        'email' => 'jondoe@gmail.com',
+        'name'          => 'jon doe',
+        'email'         => 'jondoe@gmail.com',
     ]);
 });
 
 test('I should be able to delete a list', function () {
     $response = $this->postJson(route('lists.store'), [
-        'title' => 'Email List Title',
+        'title'    => 'Email List Title',
         'listFile' => UploadedFile::fake()->createWithContent(
             'sample_names.csv',
             <<<'CSV'
@@ -99,7 +101,7 @@ test('I should be able to delete a list', function () {
 
 test('I should not be able to edit a list from another user', function () {
     $emailList = EmailList::factory()->create([
-        'title' => 'Email List Title',
+        'title'   => 'Email List Title',
         'user_id' => $this->user1->id,
     ]);
 
@@ -112,19 +114,19 @@ test('I should not be able to edit a list from another user', function () {
     $response->assertStatus(Response::HTTP_FORBIDDEN);
 
     $this->assertDatabaseMissing('email_lists', [
-        'id' => $emailList->id,
+        'id'    => $emailList->id,
         'title' => 'Updated Email List Title',
     ]);
 
     $this->assertDatabaseHas('email_lists', [
-        'id' => $emailList->id,
+        'id'    => $emailList->id,
         'title' => 'Email List Title',
     ]);
 });
 
 test('I should not be able to delete a list from another user', function () {
     $emailList = EmailList::factory()->create([
-        'title' => 'Email List Title',
+        'title'   => 'Email List Title',
         'user_id' => $this->user1->id,
     ]);
 
@@ -135,24 +137,24 @@ test('I should not be able to delete a list from another user', function () {
     $response->assertStatus(Response::HTTP_FORBIDDEN);
 
     $this->assertDatabaseHas('email_lists', [
-        'id' => $emailList->id,
+        'id'    => $emailList->id,
         'title' => 'Email List Title',
     ]);
 });
 
 test('I should only be able to get the lists created by my user', function () {
     EmailList::factory()->create([
-        'title' => 'User 1 Email List 1',
+        'title'   => 'User 1 Email List 1',
         'user_id' => $this->user1->id,
     ]);
 
     EmailList::factory()->create([
-        'title' => 'User 1 Email List 2',
+        'title'   => 'User 1 Email List 2',
         'user_id' => $this->user1->id,
     ]);
 
     $emailList3 = EmailList::factory()->create([
-        'title' => 'User 2 Email List',
+        'title'   => 'User 2 Email List',
         'user_id' => $this->user2->id,
     ]);
 
@@ -173,7 +175,7 @@ test('I should not be able to create a list with the same title of an existing l
     ]);
 
     $response = $this->postJson(route('lists.store'), [
-        'title' => 'Email List',
+        'title'    => 'Email List',
         'listFile' => UploadedFile::fake()->createWithContent(
             'sample_names.csv',
             <<<'CSV'
@@ -196,7 +198,7 @@ test('I should not be able to create a list with the same title of an existing l
 
 test('I should be able to view deleted lists', function () {
     $response = $this->postJson(route('lists.store'), [
-        'title' => 'Email List Title',
+        'title'    => 'Email List Title',
         'listFile' => UploadedFile::fake()->createWithContent(
             'sample_names.csv',
             <<<'CSV'
@@ -223,19 +225,19 @@ test('I should be able to view deleted lists', function () {
     $response->assertStatus(Response::HTTP_OK);
 
     $response->assertJsonFragment([
-        'id' => $emailList->id,
+        'id'    => $emailList->id,
         'title' => 'Email List Title',
     ]);
 });
 
 test('I should be able to search a list by its title or id', function () {
     $emailList1 = EmailList::factory()->create([
-        'title' => 'A Title',
+        'title'   => 'A Title',
         'user_id' => $this->user1->id,
     ]);
 
     EmailList::factory()->create([
-        'title' => 'Another Different Title',
+        'title'   => 'Another Different Title',
         'user_id' => $this->user1->id,
     ]);
 

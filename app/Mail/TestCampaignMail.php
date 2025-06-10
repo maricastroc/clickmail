@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -10,7 +12,8 @@ use Illuminate\Queue\SerializesModels;
 
 class TestCampaignMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public $subject;
 
@@ -19,7 +22,7 @@ class TestCampaignMail extends Mailable
     public function __construct($subject, $body)
     {
         $this->subject = $subject;
-        $this->body = $body;
+        $this->body    = $body;
     }
 
     /**

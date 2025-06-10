@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,14 +46,14 @@ class EmailList extends Model
 
         return DB::transaction(function () use ($data, $items) {
             $emailList = self::create([
-                'title' => $data['title'],
+                'title'   => $data['title'],
                 'user_id' => $data['user_id'],
             ]);
 
             foreach ($items as $item) {
                 Subscriber::create([
-                    'name' => $item['name'],
-                    'email' => $item['email'],
+                    'name'          => $item['name'],
+                    'email'         => $item['email'],
                     'email_list_id' => $emailList->id,
                 ]);
             }
@@ -81,7 +83,7 @@ class EmailList extends Model
 
         $headers = fgetcsv($fileHandle, 1000, ',');
 
-        $nameIndex = array_search('name', $headers);
+        $nameIndex  = array_search('name', $headers);
         $emailIndex = array_search('email', $headers);
 
         if ($nameIndex === false || $emailIndex === false) {
@@ -92,7 +94,7 @@ class EmailList extends Model
 
         while (($row = fgetcsv($fileHandle, 1000, ',')) !== false) {
             $items[] = [
-                'name' => $row[$nameIndex],
+                'name'  => $row[$nameIndex],
                 'email' => $row[$emailIndex],
             ];
         }

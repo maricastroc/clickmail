@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use App\Models\Template;
 use App\Models\User;
 use Illuminate\Http\Response;
@@ -44,7 +46,7 @@ test('I should be able to update a list', function () {
     $response->assertStatus(Response::HTTP_OK);
 
     $this->assertDatabaseHas('templates', [
-        'id' => $template->id,
+        'id'   => $template->id,
         'name' => 'Updated Template',
         'body' => '<p>Updated body content</p>',
     ]);
@@ -71,8 +73,8 @@ test('I should be able to delete a template', function () {
 
 test('I should not be able to edit a template from another user', function () {
     $template = Template::factory()->create([
-        'name' => 'New Template',
-        'body' => '<p>Body content</p>',
+        'name'    => 'New Template',
+        'body'    => '<p>Body content</p>',
         'user_id' => $this->user1->id,
     ]);
 
@@ -86,20 +88,20 @@ test('I should not be able to edit a template from another user', function () {
     $response->assertStatus(Response::HTTP_FORBIDDEN);
 
     $this->assertDatabaseMissing('templates', [
-        'id' => $template->id,
+        'id'   => $template->id,
         'name' => 'Updated Template',
     ]);
 
     $this->assertDatabaseHas('templates', [
-        'id' => $template->id,
+        'id'   => $template->id,
         'name' => 'New Template',
     ]);
 });
 
 test('I should not be able to delete a list from another user', function () {
     $template = Template::factory()->create([
-        'name' => 'New Template',
-        'body' => '<p>Body content</p>',
+        'name'    => 'New Template',
+        'body'    => '<p>Body content</p>',
         'user_id' => $this->user1->id,
     ]);
 
@@ -110,27 +112,27 @@ test('I should not be able to delete a list from another user', function () {
     $response->assertStatus(Response::HTTP_FORBIDDEN);
 
     $this->assertDatabaseHas('templates', [
-        'id' => $template->id,
+        'id'   => $template->id,
         'name' => 'New Template',
     ]);
 });
 
 test('I should only be able to get the templates created by my user', function () {
     Template::factory()->create([
-        'name' => 'Template User 1',
-        'body' => '<p>Body content</p>',
+        'name'    => 'Template User 1',
+        'body'    => '<p>Body content</p>',
         'user_id' => $this->user1->id,
     ]);
 
     Template::factory()->create([
-        'name' => 'Template User 2',
-        'body' => '<p>Body content</p>',
+        'name'    => 'Template User 2',
+        'body'    => '<p>Body content</p>',
         'user_id' => $this->user1->id,
     ]);
 
     $template3 = Template::factory()->create([
-        'name' => 'Template User 2',
-        'body' => '<p>Body content</p>',
+        'name'    => 'Template User 2',
+        'body'    => '<p>Body content</p>',
         'user_id' => $this->user2->id,
     ]);
 

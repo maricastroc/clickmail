@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Mail;
 
 use App\Models\Campaign;
@@ -12,7 +14,8 @@ use Illuminate\Queue\SerializesModels;
 
 class EmailCampaign extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
@@ -20,7 +23,8 @@ class EmailCampaign extends Mailable
     public function __construct(
         public Campaign $campaign,
         public CampaignMail $mail
-    ) {}
+    ) {
+    }
 
     /**
      * Get the message envelope.
@@ -54,8 +58,8 @@ class EmailCampaign extends Mailable
         $body = $this->campaign->body;
 
         foreach ($matches[1] as $index => $oldValue) {
-            $newValue = 'href="'.route('tracking.clicks', ['mail' => $this->mail->id, 'url' => $oldValue]).'"';
-            $body = substr_replace($body, $newValue, strpos($body, $matches[0][$index]), strlen($matches[0][$index]));
+            $newValue = 'href="' . route('tracking.clicks', ['mail' => $this->mail->id, 'url' => $oldValue]) . '"';
+            $body     = substr_replace($body, $newValue, strpos($body, $matches[0][$index]), strlen($matches[0][$index]));
         }
 
         return $body;

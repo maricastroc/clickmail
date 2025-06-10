@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Factories;
 
 use App\Models\Campaign;
@@ -19,11 +21,11 @@ class CampaignMailFactory extends Factory
     public function definition(): array
     {
         return [
-            'campaign_id' => Campaign::factory(),
+            'campaign_id'   => Campaign::factory(),
             'subscriber_id' => Subscriber::factory(),
-            'send_at' => fake()->dateTime,
-            'opens' => fake()->numberBetween(0, 10),
-            'clicks' => fake()->numberBetween(0, 10),
+            'send_at'       => fake()->dateTime,
+            'opens'         => fake()->numberBetween(0, 10),
+            'clicks'        => fake()->numberBetween(0, 10),
         ];
     }
 }

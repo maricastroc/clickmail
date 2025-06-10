@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SubscriberRequest;
@@ -37,7 +39,7 @@ class SubscriberController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create subscriber. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -51,7 +53,7 @@ class SubscriberController extends Controller
 
         return Inertia::render('EmailLists/Subscribers/Form', [
             'subscriber' => $subscriber,
-            'isEdit' => true,
+            'isEdit'     => true,
         ]);
     }
 
@@ -67,13 +69,13 @@ class SubscriberController extends Controller
             $subscriber->update($data);
 
             return response()->json([
-                'message' => 'Subscriber successfully updated!',
+                'message'    => 'Subscriber successfully updated!',
                 'subscriber' => $subscriber,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while updating the subscriber.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -94,7 +96,7 @@ class SubscriberController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete subscriber. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -132,7 +134,7 @@ class SubscriberController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to restore subscriber. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

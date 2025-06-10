@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use App\Models\CampaignMail;
@@ -26,7 +28,7 @@ class EmailTrackingController extends Controller
             return response($transparentImage)
                 ->header('Content-Type', 'image/gif');
         } catch (\Exception $e) {
-            Log::error('Error during tracking open: '.$e->getMessage());
+            Log::error('Error during tracking open: ' . $e->getMessage());
 
             return response(null, 500);
         }
@@ -51,7 +53,7 @@ class EmailTrackingController extends Controller
 
             return redirect()->away($originalUrl);
         } catch (\Exception $e) {
-            Log::error('Error during tracking click: '.$e->getMessage());
+            Log::error('Error during tracking click: ' . $e->getMessage());
 
             return response(null, 500);
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use App\Mail\TestCampaignMail;
@@ -22,9 +24,9 @@ class CampaignEmailController extends Controller
     public function test(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email'   => 'required|email',
             'subject' => 'required|string|max:255',
-            'body' => 'required|string',
+            'body'    => 'required|string',
         ]);
 
         try {
@@ -36,7 +38,7 @@ class CampaignEmailController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to send email. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

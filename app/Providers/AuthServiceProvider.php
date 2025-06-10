@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Providers;
 
 use App\Models\Campaign;
@@ -20,10 +22,10 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        EmailList::class => EmailListPolicy::class,
+        EmailList::class  => EmailListPolicy::class,
         Subscriber::class => SubscriberPolicy::class,
-        Template::class => TemplatePolicy::class,
-        Campaign::class => CampaignPolicy::class,
+        Template::class   => TemplatePolicy::class,
+        Campaign::class   => CampaignPolicy::class,
     ];
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Factories;
 
 use App\Models\EmailList;
@@ -18,8 +20,8 @@ class SubscriberFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->email,
+            'name'          => fake()->name(),
+            'email'         => fake()->email,
             'email_list_id' => EmailList::factory(),
         ];
     }

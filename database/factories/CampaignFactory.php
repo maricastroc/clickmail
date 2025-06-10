@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Factories;
 
 use App\Models\EmailList;
@@ -20,17 +22,17 @@ class CampaignFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake('en_US')->words(3, true),
-            'subject' => fake()->sentence,
+            'name'          => fake('en_US')->words(3, true),
+            'subject'       => fake()->sentence,
             'email_list_id' => EmailList::factory(),
-            'template_id' => Template::factory(),
-            'user_id' => User::factory(),
-            'track_click' => fake()->boolean,
-            'track_open' => fake()->boolean,
-            'body' => fake()->randomHtml,
-            'created_at' => fake()->dateTimeBetween('-7 days', 'now'),
-            'updated_at' => fake()->dateTimeBetween('-7 days', 'now'),
-            'deleted_at' => fake()->boolean ? fake()->dateTimeBetween('-7 days', 'now') : null,
+            'template_id'   => Template::factory(),
+            'user_id'       => User::factory(),
+            'track_click'   => fake()->boolean,
+            'track_open'    => fake()->boolean,
+            'body'          => fake()->randomHtml,
+            'created_at'    => fake()->dateTimeBetween('-7 days', 'now'),
+            'updated_at'    => fake()->dateTimeBetween('-7 days', 'now'),
+            'deleted_at'    => fake()->boolean ? fake()->dateTimeBetween('-7 days', 'now') : null,
         ];
     }
 }

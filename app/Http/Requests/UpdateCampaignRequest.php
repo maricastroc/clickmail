@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Requests;
 
 use Carbon\Carbon;
@@ -33,7 +35,7 @@ class UpdateCampaignRequest extends FormRequest
                     'max:255',
                     Rule::unique('campaigns')->ignoreModel($this->route('campaign')),
                 ],
-                'subject' => ['required', 'string', 'max:255'],
+                'subject'       => ['required', 'string', 'max:255'],
                 'email_list_id' => [
                     'required',
                     'integer',
@@ -61,7 +63,7 @@ class UpdateCampaignRequest extends FormRequest
                     'max:255',
                     Rule::unique('campaigns')->ignoreModel($this->route('campaign')),
                 ],
-                'subject' => ['required', 'string', 'max:255'],
+                'subject'       => ['required', 'string', 'max:255'],
                 'email_list_id' => [
                     'required',
                     'integer',
@@ -73,8 +75,8 @@ class UpdateCampaignRequest extends FormRequest
                     'exists:templates,id',
                 ],
                 'track_click' => ['required', 'boolean'],
-                'track_open' => ['required', 'boolean'],
-                'body' => ['required'],
+                'track_open'  => ['required', 'boolean'],
+                'body'        => ['required'],
             ];
         }
 
@@ -86,7 +88,7 @@ class UpdateCampaignRequest extends FormRequest
                     'max:255',
                     Rule::unique('campaigns')->ignoreModel($this->route('campaign')),
                 ],
-                'subject' => ['required', 'string', 'max:255'],
+                'subject'       => ['required', 'string', 'max:255'],
                 'email_list_id' => [
                     'required',
                     'integer',
@@ -98,12 +100,12 @@ class UpdateCampaignRequest extends FormRequest
                     'exists:templates,id',
                 ],
                 'track_click' => ['required', 'boolean'],
-                'track_open' => ['required', 'boolean'],
-                'body' => ['required'],
-                'send_at' => [
+                'track_open'  => ['required', 'boolean'],
+                'body'        => ['required'],
+                'send_at'     => [
                     'required',
                     'date',
-                    'after_or_equal:'.Carbon::now('America/Sao_Paulo')->toDateTimeString(),
+                    'after_or_equal:' . Carbon::now('America/Sao_Paulo')->toDateTimeString(),
                 ],
                 'customize_send_at' => ['required', 'boolean'],
             ];

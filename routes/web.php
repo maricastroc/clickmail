@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CampaignEmailController;
 use App\Http\Controllers\CampaignStatisticsController;
@@ -44,7 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/env-variables', function () {
         return response()->json([
             'MAIL_FROM_ADDRESS' => env('MAIL_FROM_ADDRESS'),
-            'MAIL_FROM_NAME' => env('MAIL_FROM_NAME'),
+            'MAIL_FROM_NAME'    => env('MAIL_FROM_NAME'),
         ]);
     });
 });
@@ -67,4 +69,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

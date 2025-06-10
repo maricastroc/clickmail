@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Database\Seeders;
 
 use App\Models\User;
@@ -13,8 +15,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::factory()->create([
-            'name' => 'Mariana Castro',
-            'email' => 'marianacastrorc@gmail.com',
+            'name'     => 'Mariana Castro',
+            'email'    => 'marianacastrorc@gmail.com',
             'password' => 'teste123!!',
         ]);
     }

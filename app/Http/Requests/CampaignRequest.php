@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Requests;
 
 use Carbon\Carbon;
@@ -33,7 +35,7 @@ class CampaignRequest extends FormRequest
                     'max:255',
                     Rule::unique('campaigns', 'name'),
                 ],
-                'subject' => ['required', 'string', 'max:255'],
+                'subject'       => ['required', 'string', 'max:255'],
                 'email_list_id' => [
                     'required',
                     'integer',
@@ -66,7 +68,7 @@ class CampaignRequest extends FormRequest
                     'string', 'max:255',
                     Rule::unique('campaigns', 'name'),
                 ],
-                'subject' => ['required', 'string', 'max:255'],
+                'subject'       => ['required', 'string', 'max:255'],
                 'email_list_id' => [
                     'required',
                     'integer',
@@ -78,15 +80,15 @@ class CampaignRequest extends FormRequest
                     'exists:templates,id',
                 ],
                 'track_click' => ['required', 'boolean'],
-                'track_open' => ['required', 'boolean'],
-                'body' => ['required'],
+                'track_open'  => ['required', 'boolean'],
+                'body'        => ['required'],
             ];
 
             if ($this->input('draft_mode') === false || $this->input('draft_mode') === 'false') {
                 $rules['send_at'] = [
                     'required',
                     'date',
-                    'after_or_equal:'.Carbon::now('America/Sao_Paulo')->toDateTimeString(),
+                    'after_or_equal:' . Carbon::now('America/Sao_Paulo')->toDateTimeString(),
                 ];
                 $rules['customize_send_at'] = ['required', 'boolean'];
             }

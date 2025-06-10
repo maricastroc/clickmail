@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TemplateRequest;
@@ -19,7 +21,7 @@ class TemplateController extends Controller
 
         $user = $request->user();
 
-        $search = $request->query('search', '');
+        $search      = $request->query('search', '');
         $withTrashed = $request->query('withTrashed', false);
 
         $templatesQuery = $user->templates()
@@ -71,7 +73,7 @@ class TemplateController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create template. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -97,7 +99,7 @@ class TemplateController extends Controller
 
         return Inertia::render('Templates/Form', [
             'template' => $template,
-            'isEdit' => true,
+            'isEdit'   => true,
         ]);
     }
 
@@ -114,12 +116,12 @@ class TemplateController extends Controller
 
             return response()->json([
                 'message' => 'Template successfully updated!',
-                'list' => $template,
+                'list'    => $template,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while updating the template.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -140,7 +142,7 @@ class TemplateController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete template. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
@@ -170,7 +172,7 @@ class TemplateController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to restore template. Please try again later.',
-                'error' => $e->getMessage(),
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

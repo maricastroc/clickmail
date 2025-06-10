@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use App\Models\Campaign;
 use App\Models\CampaignMail;
 use App\Models\EmailList;
@@ -22,9 +24,9 @@ test('Campaign statistics are displayed correctly', function () {
     ]);
 
     CampaignMail::factory()->count(5)->create([
-        'campaign_id' => $campaign->id,
-        'opens' => 3,
-        'clicks' => 2,
+        'campaign_id'   => $campaign->id,
+        'opens'         => 3,
+        'clicks'        => 2,
         'subscriber_id' => $subscriber->id,
     ]);
 
@@ -34,7 +36,7 @@ test('Campaign statistics are displayed correctly', function () {
 
     $response->assertJsonFragment([
         'total_emails' => 5,
-        'total_opens' => 15,
+        'total_opens'  => 15,
         'total_clicks' => 10,
     ]);
 });
