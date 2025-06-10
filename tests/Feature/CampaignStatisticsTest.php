@@ -1,16 +1,11 @@
 <?php
 
-use App\Models\Subscriber;
-use App\Models\EmailList;
-use App\Models\Template;
-use App\Models\User;
 use App\Models\Campaign;
 use App\Models\CampaignMail;
+use App\Models\EmailList;
+use App\Models\Subscriber;
+use App\Models\User;
 use Illuminate\Http\Response;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Bus;
-use App\Jobs\SendEmailsCampaignJob;
-use App\Mail\EmailCampaign;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -23,7 +18,7 @@ test('Campaign statistics are displayed correctly', function () {
     $campaign = Campaign::factory()->create(['user_id' => $this->user->id, 'deleted_at' => null]);
 
     $subscriber = Subscriber::factory()->create([
-        'email_list_id' => EmailList::factory()->create()->id
+        'email_list_id' => EmailList::factory()->create()->id,
     ]);
 
     CampaignMail::factory()->count(5)->create([

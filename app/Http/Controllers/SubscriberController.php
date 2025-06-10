@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SubscriberRequest;
-use App\Models\Subscriber;
 use App\Models\EmailList;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Subscriber;
 use Inertia\Inertia;
 
 class SubscriberController extends Controller
@@ -22,16 +21,16 @@ class SubscriberController extends Controller
         ]);
     }
 
-        /**
+    /**
      * Store a newly created resource in storage.
      */
     public function store(SubscriberRequest $request)
     {
         try {
             $data = $request->validated();
-            
+
             Subscriber::create($data);
-            
+
             return response()->json([
                 'message' => 'Subscriber successfully created!',
             ], 201);
@@ -66,7 +65,7 @@ class SubscriberController extends Controller
         try {
             $data = $request->validated();
             $subscriber->update($data);
-    
+
             return response()->json([
                 'message' => 'Subscriber successfully updated!',
                 'subscriber' => $subscriber,
@@ -88,7 +87,7 @@ class SubscriberController extends Controller
 
         try {
             $subscriber->delete();
-    
+
             return response()->json([
                 'message' => 'Subscriber successfully deleted!',
             ], 200);
@@ -102,31 +101,31 @@ class SubscriberController extends Controller
 
     public function restore(EmailList $list, Subscriber $subscriber)
     {
-        if (!$subscriber) {
+        if (! $subscriber) {
             return response()->json([
                 'message' => 'Subscriber not found.',
             ], 404);
         }
-    
-        if (!$subscriber->trashed()) {
+
+        if (! $subscriber->trashed()) {
             return response()->json([
                 'message' => 'This subscriber is not deleted.',
             ], 400);
         }
 
         if (
-            !$subscriber->emailList()->withTrashed()->exists()
+            ! $subscriber->emailList()->withTrashed()->exists()
         ) {
             return response()->json([
                 'message' => 'Cannot restore the subscriber because its associated list is deleted.',
             ], 400);
         }
-    
+
         $this->authorize('restore', $subscriber);
-    
+
         try {
             $subscriber->restore();
-    
+
             return response()->json([
                 'message' => 'Subscriber successfully restored!',
             ], 200);

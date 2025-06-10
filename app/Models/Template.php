@@ -11,6 +11,7 @@ class Template extends Model
 {
     /** @use HasFactory<\Database\Factories\TemplateFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = ['name', 'body', 'user_id'];

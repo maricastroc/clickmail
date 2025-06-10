@@ -5,7 +5,6 @@ namespace App\Mail;
 use App\Models\Campaign;
 use App\Models\CampaignMail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -18,16 +17,10 @@ class EmailCampaign extends Mailable
     /**
      * Create a new message instance.
      */
-    /**
-     * @param \App\Models\Campaign $campaign
-     */
     public function __construct(
         public Campaign $campaign,
         public CampaignMail $mail
-    )
-    {
-
-    }
+    ) {}
 
     /**
      * Get the message envelope.
@@ -47,20 +40,21 @@ class EmailCampaign extends Mailable
         return new Content(
             markdown: 'mail.email-campaign',
             with: [
-                'body' => $this->getBody()
+                'body' => $this->getBody(),
             ]
         );
     }
 
-    public function getBody() {
+    public function getBody()
+    {
         $pattern = '/href="([^"]*)"/';
-    
+
         preg_match_all($pattern, $this->campaign->body, $matches);
 
         $body = $this->campaign->body;
 
         foreach ($matches[1] as $index => $oldValue) {
-            $newValue = 'href="' . route('tracking.clicks', ['mail' => $this->mail->id, 'url' => $oldValue]) . '"';
+            $newValue = 'href="'.route('tracking.clicks', ['mail' => $this->mail->id, 'url' => $oldValue]).'"';
             $body = substr_replace($body, $newValue, strpos($body, $matches[0][$index]), strlen($matches[0][$index]));
         }
 

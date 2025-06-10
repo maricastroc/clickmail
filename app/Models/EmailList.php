@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Subscriber;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +12,7 @@ class EmailList extends Model
 {
     /** @use HasFactory<\Database\Factories\EmailList> */
     use HasFactory;
+
     use SoftDeletes;
 
     /**
@@ -41,21 +41,21 @@ class EmailList extends Model
         $data['user_id'] = $userId;
 
         $items = self::readEmailsFromCsvFile($data);
-    
+
         return DB::transaction(function () use ($data, $items) {
             $emailList = self::create([
-                'title'   => $data['title'],
+                'title' => $data['title'],
                 'user_id' => $data['user_id'],
             ]);
-    
+
             foreach ($items as $item) {
                 Subscriber::create([
-                    'name'          => $item['name'],
-                    'email'         => $item['email'],
+                    'name' => $item['name'],
+                    'email' => $item['email'],
                     'email_list_id' => $emailList->id,
                 ]);
             }
-    
+
             return $emailList;
         });
     }
@@ -75,29 +75,30 @@ class EmailList extends Model
         return $this->hasMany(Campaign::class);
     }
 
-    private static function readEmailsFromCsvFile(array $data) {
+    private static function readEmailsFromCsvFile(array $data)
+    {
         $fileHandle = fopen($data['listFile']->getRealPath(), 'r');
-    
+
         $headers = fgetcsv($fileHandle, 1000, ',');
-    
+
         $nameIndex = array_search('name', $headers);
         $emailIndex = array_search('email', $headers);
-    
+
         if ($nameIndex === false || $emailIndex === false) {
             throw new \Exception('CSV must contain "name" and "email" columns.');
         }
-    
+
         $items = [];
-    
+
         while (($row = fgetcsv($fileHandle, 1000, ',')) !== false) {
             $items[] = [
-                'name'  => $row[$nameIndex],
+                'name' => $row[$nameIndex],
                 'email' => $row[$emailIndex],
             ];
         }
-    
+
         fclose($fileHandle);
-    
+
         return $items;
     }
 

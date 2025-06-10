@@ -1,16 +1,15 @@
 <?php
 
-use App\Models\Subscriber;
-use App\Models\EmailList;
-use App\Models\Template;
-use App\Models\User;
-use App\Models\Campaign;
-use App\Models\CampaignMail;
-use Illuminate\Http\Response;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Bus;
 use App\Jobs\SendEmailsCampaignJob;
 use App\Mail\EmailCampaign;
+use App\Models\Campaign;
+use App\Models\CampaignMail;
+use App\Models\EmailList;
+use App\Models\Subscriber;
+use App\Models\Template;
+use App\Models\User;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -19,9 +18,9 @@ beforeEach(function () {
 
 test('I should be able to get all my user campaigns', function () {
     Campaign::factory()->count(15)->create(['user_id' => $this->user->id, 'deleted_at' => null]);
-    
+
     $response = $this->getJson(route('dashboard'));
-    
+
     $response->assertStatus(Response::HTTP_OK)
         ->assertJsonStructure([
             'data' => [
@@ -38,7 +37,7 @@ test('I should be able to get all my user campaigns', function () {
                     'user_id',
                     'created_at',
                     'updated_at',
-                ]
+                ],
             ],
             'links',
         ])
@@ -51,15 +50,15 @@ test('I should be able to search campaigns by name', function () {
         'name' => 'Campaign Alpha',
         'deleted_at' => null,
     ]);
-    
+
     $campaign2 = Campaign::factory()->create([
         'user_id' => $this->user->id,
         'name' => 'Campaign Beta',
         'deleted_at' => null,
     ]);
-    
+
     $response = $this->getJson(route('dashboard', ['search' => 'Alpha']));
-    
+
     $response->assertStatus(Response::HTTP_OK)
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $campaign1->id);
@@ -68,7 +67,7 @@ test('I should be able to search campaigns by name', function () {
 test('I should be able to filter to include deleted campaigns', function () {
     $activeCampaign = Campaign::factory()->create([
         'user_id' => $this->user->id,
-        'deleted_at' => null
+        'deleted_at' => null,
     ]);
 
     $deletedCampaign = Campaign::factory()->create([
@@ -79,28 +78,28 @@ test('I should be able to filter to include deleted campaigns', function () {
 
     $response = $this->getJson(route('dashboard'));
     $response->assertStatus(Response::HTTP_OK)
-      ->assertJsonCount(1, 'data');
+        ->assertJsonCount(1, 'data');
 
     $response = $this->getJson(route('dashboard', ['withTrashed' => true]));
     $response->assertStatus(Response::HTTP_OK)
-      ->assertJsonCount(2, 'data');
+        ->assertJsonCount(2, 'data');
 });
 
 test('I should not be able to see other users campaigns', function () {
     $otherUser = User::factory()->create();
     Campaign::factory()->count(3)->create(['user_id' => $otherUser->id]);
-    
+
     $response = $this->getJson(route('dashboard'));
-    
+
     $response->assertStatus(Response::HTTP_OK)
         ->assertJsonCount(0, 'data');
 });
 
 test('I should be able to access the create campaign page', function () {
     $emailList = EmailList::factory()->create(['user_id' => $this->user->id]);
-    
+
     $response = $this->get(route('campaigns.create'));
-    
+
     $response->assertInertia(fn ($page) => $page
         ->component('Dashboard/Form')
         ->has('emailLists')
@@ -154,6 +153,7 @@ test('I should be able to schedule a campaign to send in the future', function (
             return $job->delay->getTimestamp() === $sendAt->getTimestamp();
         } elseif (is_int($job->delay)) {
             $expectedDelay = $sendAt->diffInSeconds(now());
+
             return abs($job->delay - $expectedDelay) < 5;
         }
 
@@ -212,7 +212,7 @@ test('I should be able to update a campaign draft', function () {
 
 test('It should create a job for each subscriber when campaign is sent', function () {
     Bus::fake();
-    
+
     $user = User::factory()->create();
     $this->actingAs($user);
 
@@ -259,7 +259,7 @@ test('I should not be able to restore a campaign that does not belong to me', fu
     $campaign->delete();
 
     $response = $this->putJson(route('campaigns.restore', $campaign->id));
-    
+
     $response->assertStatus(403);
 });
 
@@ -288,7 +288,7 @@ test('I should not be able to create a campaign without a valid step', function 
 test('I should be able to create a campaign without step 1 valid data on draft mode', function () {
     $payload = [
         'step' => 1,
-        'draft_mode' => true
+        'draft_mode' => true,
     ];
 
     $response = $this->postJson(route('campaigns.store'), $payload);
@@ -375,24 +375,24 @@ test('I should not be able to create a campaign without step 3 valid data', func
 test('Links on the body should be replaced with the tracking line', function () {
     $emailList = EmailList::factory()->create();
     $subscriber = Subscriber::factory()->create(['email_list_id' => $emailList->id]);
-    
+
     $template = Template::factory()->create([
-        'body' => '<div>Hello, world! <a href="http://www.google.com">Click here</a> </div>'
+        'body' => '<div>Hello, world! <a href="http://www.google.com">Click here</a> </div>',
     ]);
 
     $campaign = Campaign::factory()->create([
         'email_list_id' => $emailList->id,
         'template_id' => $template->id,
-        'body' => $template->body, 
+        'body' => $template->body,
         'send_at' => now()->addDays(2)->format('Y-m-d'),
         'track_click' => true,
-        'user_id' => $this->user->id
+        'user_id' => $this->user->id,
     ]);
 
     $mail = CampaignMail::create([
-        'campaign_id' => $campaign->id, 
-        'subscriber_id' => $subscriber->id, 
-        'send_at' => $campaign->send_at
+        'campaign_id' => $campaign->id,
+        'subscriber_id' => $subscriber->id,
+        'send_at' => $campaign->send_at,
     ]);
 
     $renderedMail = (new EmailCampaign($campaign, $mail))->render();
@@ -403,20 +403,20 @@ test('Links on the body should be replaced with the tracking line', function () 
     $expectedUrl = route('tracking.clicks', ['mail' => $mail, 'url' => 'http://www.google.com']);
 
     foreach ($matches[1] as $index => $value) {
-    if (!str_contains($value, '/track/click/')) {
-        continue;
+        if (! str_contains($value, '/track/click/')) {
+            continue;
+        }
+        expect($value)->toBe(route('tracking.clicks', ['mail' => $mail, 'url' => 'http://www.google.com']));
     }
-    expect($value)->toBe(route('tracking.clicks', ['mail' => $mail, 'url' => 'http://www.google.com']));
-}
 });
 
 test('Tracking click increments count and redirects', function () {
     $this->withoutExceptionHandling();
-    
+
     $campaign = Campaign::factory()->create(['track_click' => true, 'deleted_at' => null]);
     $campaignMail = CampaignMail::factory()->create([
         'clicks' => 0,
-        'campaign_id' => $campaign->id
+        'campaign_id' => $campaign->id,
     ]);
 
     $campaignMail->load('campaign');
@@ -430,11 +430,11 @@ test('Tracking click increments count and redirects', function () {
 
 test('Tracking click does not increment if track_click is disabled', function () {
     $this->withoutExceptionHandling();
-    
+
     $campaign = Campaign::factory()->create(['track_click' => false, 'deleted_at' => null]);
     $campaignMail = CampaignMail::factory()->create([
         'clicks' => 0,
-        'campaign_id' => $campaign->id
+        'campaign_id' => $campaign->id,
     ]);
 
     $campaignMail->load('campaign');
@@ -447,11 +447,11 @@ test('Tracking click does not increment if track_click is disabled', function ()
 
 test('Tracking opening increments count', function () {
     $this->withoutExceptionHandling();
-    
+
     $campaign = Campaign::factory()->create(['track_open' => true, 'deleted_at' => null]);
     $campaignMail = CampaignMail::factory()->create([
         'campaign_id' => $campaign->id,
-        'opens' => 0
+        'opens' => 0,
     ]);
 
     $campaignMail->load('campaign');
@@ -465,16 +465,16 @@ test('Tracking opening increments count', function () {
 
 test('Tracking opening does not increment if tracking is disabled', function () {
     $this->withoutExceptionHandling();
-    
+
     $campaign = Campaign::factory()->create(['track_open' => false, 'deleted_at' => null]);
 
     $campaignMail = CampaignMail::factory()->create([
         'campaign_id' => $campaign->id,
         'opens' => 0,
-        'deleted_at' => null
+        'deleted_at' => null,
     ]);
 
-        $campaignMail->load('campaign');
+    $campaignMail->load('campaign');
 
     $response = $this->get(route('tracking.openings', ['mail' => $campaignMail]));
 

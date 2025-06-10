@@ -19,7 +19,7 @@ class EmailListRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('email_lists', 'title')
+                Rule::unique('email_lists', 'title'),
             ],
             'listFile' => ['required', 'file', 'mimes:csv'],
         ];

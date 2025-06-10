@@ -19,7 +19,7 @@ class EmailListSeeder extends Seeder
         EmailList::factory()->count(50)->create([
             'user_id' => $user->id,
         ])
-            ->each(function (EmailList $list) use ($user) {
+            ->each(function (EmailList $list) {
                 Subscriber::factory()
                     ->count(rand(50, 200))
                     ->create([

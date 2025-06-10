@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Campaign;
 use App\Models\CampaignMail;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CampaignMailSeeder extends Seeder

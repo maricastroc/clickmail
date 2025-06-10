@@ -47,4 +47,3 @@ class SubscriberRequest extends FormRequest
         }
     }
 }
-

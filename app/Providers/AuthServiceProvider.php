@@ -2,16 +2,15 @@
 
 namespace App\Providers;
 
-use App\Models\EmailList;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Models\Campaign;
-use App\Models\CampaignMail;
+use App\Models\EmailList;
 use App\Models\Subscriber;
 use App\Models\Template;
 use App\Policies\CampaignPolicy;
 use App\Policies\EmailListPolicy;
 use App\Policies\SubscriberPolicy;
 use App\Policies\TemplatePolicy;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {

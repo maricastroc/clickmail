@@ -34,7 +34,7 @@ class CampaignController extends Controller
 
         $campaignsQuery = $user->campaigns()
             ->search($search);
-    
+
         if ($withTrashed) {
             $campaignsQuery->withTrashed();
         }
@@ -90,7 +90,7 @@ class CampaignController extends Controller
             if ($request->step === 3) {
                 $campaign = Campaign::create($data);
 
-                if (isset($request->draft_mode) && !$request->draft_mode) {
+                if (isset($request->draft_mode) && ! $request->draft_mode) {
                     try {
                         $campaign->update(['status' => Campaign::STATUS_SCHEDULED]);
 
@@ -102,7 +102,7 @@ class CampaignController extends Controller
                         } else {
                             SendEmailsCampaignJob::dispatch($campaign);
                         }
-    
+
                         return response()->json([
                             'message' => 'Emails sent successfully!',
                         ], 200);
@@ -134,17 +134,17 @@ class CampaignController extends Controller
 
         $search = $request->query('search', '');
         $withTrashed = $request->query('withTrashed', false);
-    
+
         $campaignsQuery = $campaign->subscribers();
-    
+
         if ($withTrashed) {
             $campaignsQuery->withTrashed();
         }
-    
+
         $campaigns = $campaignsQuery
             ->search($search)
             ->paginate(10);
-    
+
         return Inertia::render('Dashboard/Show', [
             'campaigns' => $campaigns,
         ]);
@@ -185,12 +185,12 @@ class CampaignController extends Controller
             if ($request->step === 3) {
                 $campaign->update($data);
 
-                if (isset($request->draft_mode) && !$request->draft_mode) {
+                if (isset($request->draft_mode) && ! $request->draft_mode) {
                     try {
                         $campaign->update(['status' => Campaign::STATUS_SCHEDULED]);
-                        
+
                         SendEmailsCampaignJob::dispatch($campaign)->delay($data['send_at']);
-    
+
                         return response()->json([
                             'message' => 'Emails sent successfully!',
                         ], 200);
@@ -222,7 +222,7 @@ class CampaignController extends Controller
 
         try {
             $campaign->delete();
-    
+
             return response()->json([
                 'message' => 'Campaign successfully deleted!',
             ], 200);
@@ -236,23 +236,23 @@ class CampaignController extends Controller
 
     public function restore(Campaign $campaign)
     {
-        if (!$campaign) {
+        if (! $campaign) {
             return response()->json([
                 'message' => 'Campaign not found.',
             ], 404);
         }
-    
-        if (!$campaign->trashed()) {
+
+        if (! $campaign->trashed()) {
             return response()->json([
                 'message' => 'This campaign is not deleted.',
             ], 400);
         }
-    
+
         $this->authorize('restore', $campaign);
-    
+
         try {
             $campaign->restore();
-    
+
             return response()->json([
                 'message' => 'Campaign successfully restored!',
             ], 200);

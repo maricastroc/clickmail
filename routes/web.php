@@ -18,7 +18,6 @@ Route::middleware('auth')->prefix('profile')->name('profile.')->group(function (
     Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
 });
 
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [CampaignController::class, 'index'])->name('dashboard');
     Route::resource('campaigns', CampaignController::class)->except(['index']);
@@ -54,18 +53,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/track/opening/{mail}', [EmailTrackingController::class, 'trackOpening'])
         ->name('tracking.openings');
 
-        Route::get('/track/click/{mail}', [EmailTrackingController::class, 'trackClick'])
+    Route::get('/track/click/{mail}', [EmailTrackingController::class, 'trackClick'])
         ->name('tracking.clicks');
 
-        Route::get('/email', function () {
-            $campaign = Campaign::find(7);
+    Route::get('/email', function () {
+        $campaign = Campaign::find(7);
 
-            $mail = $campaign->mails()->first();
-        
-            $email = new EmailCampaign($campaign, $mail);
-        
-            return $email->render();
-        });
+        $mail = $campaign->mails()->first();
+
+        $email = new EmailCampaign($campaign, $mail);
+
+        return $email->render();
+    });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

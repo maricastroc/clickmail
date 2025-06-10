@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
-use Illuminate\Support\Facades\Log;
 use App\Models\Campaign;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class SendEmailsCampaignJob implements ShouldQueue
 {
@@ -18,15 +18,17 @@ class SendEmailsCampaignJob implements ShouldQueue
     {
         $this->campaign = Campaign::find($this->campaign->id);
 
-        if (!$this->campaign) {
+        if (! $this->campaign) {
             Log::error("Campaign not found. ID: {$this->campaign->id}");
+
             return;
         }
 
         if ($this->campaign->status === Campaign::STATUS_SENT) {
-            Log::info("Campaign already marked as sent. Skipping email dispatch.", [
+            Log::info('Campaign already marked as sent. Skipping email dispatch.', [
                 'campaign_id' => $this->campaign->id,
             ]);
+
             return;
         }
 

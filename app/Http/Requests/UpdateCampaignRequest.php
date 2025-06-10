@@ -19,7 +19,7 @@ class UpdateCampaignRequest extends FormRequest
 
         $step = $this->input('step');
 
-        if (!in_array($step, [1, 2, 3])) {
+        if (! in_array($step, [1, 2, 3])) {
             return [
                 'step' => ['required', Rule::in([1, 2, 3])],
             ];
@@ -31,7 +31,7 @@ class UpdateCampaignRequest extends FormRequest
                     'required',
                     'string',
                     'max:255',
-                    Rule::unique('campaigns')->ignoreModel($this->route('campaign'))
+                    Rule::unique('campaigns')->ignoreModel($this->route('campaign')),
                 ],
                 'subject' => ['required', 'string', 'max:255'],
                 'email_list_id' => [
@@ -45,11 +45,11 @@ class UpdateCampaignRequest extends FormRequest
                     'exists:templates,id',
                 ],
                 'track_click' => [
-                    'required', 'boolean'
+                    'required', 'boolean',
                 ],
                 'track_open' => [
-                    'required', 'boolean'
-                ]
+                    'required', 'boolean',
+                ],
             ];
         }
 
@@ -59,7 +59,7 @@ class UpdateCampaignRequest extends FormRequest
                     'required',
                     'string',
                     'max:255',
-                    Rule::unique('campaigns')->ignoreModel($this->route('campaign'))
+                    Rule::unique('campaigns')->ignoreModel($this->route('campaign')),
                 ],
                 'subject' => ['required', 'string', 'max:255'],
                 'email_list_id' => [
@@ -84,7 +84,7 @@ class UpdateCampaignRequest extends FormRequest
                     'required',
                     'string',
                     'max:255',
-                    Rule::unique('campaigns')->ignoreModel($this->route('campaign'))
+                    Rule::unique('campaigns')->ignoreModel($this->route('campaign')),
                 ],
                 'subject' => ['required', 'string', 'max:255'],
                 'email_list_id' => [
@@ -103,7 +103,7 @@ class UpdateCampaignRequest extends FormRequest
                 'send_at' => [
                     'required',
                     'date',
-                    'after_or_equal:' . Carbon::now('America/Sao_Paulo')->toDateTimeString(),
+                    'after_or_equal:'.Carbon::now('America/Sao_Paulo')->toDateTimeString(),
                 ],
                 'customize_send_at' => ['required', 'boolean'],
             ];

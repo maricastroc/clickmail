@@ -13,6 +13,7 @@ class TestCampaignMail extends Mailable
     use Queueable, SerializesModels;
 
     public $subject;
+
     public $body;
 
     public function __construct($subject, $body)

@@ -3,10 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Campaign;
-use App\Models\EmailList;
 use App\Models\Subscriber;
-use App\Models\Template;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

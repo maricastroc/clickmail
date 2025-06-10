@@ -19,7 +19,7 @@ class UpdateTemplateRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('templates', 'name')->ignoreModel($this->route('template'))
+                Rule::unique('templates', 'name')->ignoreModel($this->route('template')),
             ],
             'body' => ['required'],
         ];

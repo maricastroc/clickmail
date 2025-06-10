@@ -15,7 +15,7 @@ class CampaignStatisticsController extends Controller
         $campaign->load('emailList', 'emailList.subscribers');
 
         $search = $request->query('search', '');
-    
+
         $campaignMails = $campaign->mails()
             ->with('subscriber')
             ->filterBySubscriber($search)
@@ -27,7 +27,6 @@ class CampaignStatisticsController extends Controller
         if ($request->expectsJson()) {
             return response()->json($statistics);
         }
-
 
         return Inertia::render('Dashboard/Show/Index', [
             'campaign' => $campaign,
@@ -55,8 +54,8 @@ class CampaignStatisticsController extends Controller
             'total_clicks' => $totalClicks,
             'unique_opens' => $uniqueOpens,
             'unique_clicks' => $uniqueClicks,
-            'open_rate' => number_format($openRate, 2) . '%',
-            'click_rate' => number_format($clickRate, 2) . '%',
+            'open_rate' => number_format($openRate, 2).'%',
+            'click_rate' => number_format($clickRate, 2).'%',
         ];
     }
 

@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Route;
 
 class Campaign extends Model
 {
     /** @use HasFactory<\Database\Factories\CampaignFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     const STATUS_DRAFT = 'draft';
+
     const STATUS_SCHEDULED = 'scheduled';
+
     const STATUS_SENT = 'sent';
 
     /**
@@ -34,7 +36,7 @@ class Campaign extends Model
         'track_click',
         'track_open',
         'customize_send_at',
-        'status'
+        'status',
     ];
 
     protected $casts = [

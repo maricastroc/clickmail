@@ -24,7 +24,7 @@ class EmailListController extends Controller
 
         $emailListsQuery = $user->emailLists()
             ->search($search);
-    
+
         if ($withTrashed) {
             $emailListsQuery->withTrashed();
         }
@@ -36,7 +36,7 @@ class EmailListController extends Controller
         if ($request->expectsJson()) {
             return response()->json($emailLists);
         }
-    
+
         return Inertia::render('EmailLists/Index', [
             'emailLists' => $emailLists,
         ]);
@@ -59,11 +59,11 @@ class EmailListController extends Controller
     {
         try {
             $userId = auth()->id();
-            
+
             $data = $request->validated();
-            
+
             $emailList = EmailList::createList($data, $userId);
-            
+
             return response()->json([
                 'message' => 'List successfully created!',
                 'data' => $emailList,
@@ -85,13 +85,13 @@ class EmailListController extends Controller
 
         $search = $request->query('search', '');
         $withTrashed = $request->query('withTrashed', false);
-    
+
         $subscribersQuery = $list->subscribers();
-    
+
         if ($withTrashed) {
             $subscribersQuery->withTrashed();
         }
-    
+
         $subscribers = $subscribersQuery
             ->search($search)
             ->paginate(10);
@@ -99,7 +99,7 @@ class EmailListController extends Controller
         if ($request->expectsJson()) {
             return response()->json($subscribers);
         }
-    
+
         return Inertia::render('EmailLists/Show', [
             'emailList' => $list,
             'subscribers' => $subscribers,
@@ -129,7 +129,7 @@ class EmailListController extends Controller
         try {
             $data = $request->validated();
             $list->update($data);
-    
+
             return response()->json([
                 'message' => 'List successfully updated!',
                 'list' => $list,
@@ -151,7 +151,7 @@ class EmailListController extends Controller
 
         try {
             $list->delete();
-    
+
             return response()->json([
                 'message' => 'List successfully deleted!',
             ], 200);
@@ -165,23 +165,23 @@ class EmailListController extends Controller
 
     public function restore(EmailList $list)
     {
-        if (!$list) {
+        if (! $list) {
             return response()->json([
                 'message' => 'List not found.',
             ], 404);
         }
-    
-        if (!$list->trashed()) {
+
+        if (! $list->trashed()) {
             return response()->json([
                 'message' => 'This list is not deleted.',
             ], 400);
         }
-    
+
         $this->authorize('restore', $list);
-    
+
         try {
             $list->restore();
-    
+
             return response()->json([
                 'message' => 'List successfully restored!',
             ], 200);

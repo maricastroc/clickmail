@@ -23,8 +23,8 @@ class TemplateController extends Controller
         $withTrashed = $request->query('withTrashed', false);
 
         $templatesQuery = $user->templates()
-        ->search($search);
-    
+            ->search($search);
+
         if ($withTrashed) {
             $templatesQuery->withTrashed();
         }
@@ -58,13 +58,13 @@ class TemplateController extends Controller
     {
         try {
             $userId = auth()->id();
-            
+
             $data = $request->validated();
 
             $data['user_id'] = $userId;
-            
+
             Template::create($data);
-            
+
             return response()->json([
                 'message' => 'Template successfully created!',
             ], 201);
@@ -111,7 +111,7 @@ class TemplateController extends Controller
         try {
             $data = $request->validated();
             $template->update($data);
-    
+
             return response()->json([
                 'message' => 'Template successfully updated!',
                 'list' => $template,
@@ -133,7 +133,7 @@ class TemplateController extends Controller
 
         try {
             $template->delete();
-    
+
             return response()->json([
                 'message' => 'Template successfully deleted!',
             ], 200);
@@ -147,23 +147,23 @@ class TemplateController extends Controller
 
     public function restore(Template $template)
     {
-        if (!$template) {
+        if (! $template) {
             return response()->json([
                 'message' => 'Template not found.',
             ], 404);
         }
-    
-        if (!$template->trashed()) {
+
+        if (! $template->trashed()) {
             return response()->json([
                 'message' => 'This template is not deleted.',
             ], 400);
         }
-    
+
         $this->authorize('restore', $template);
-    
+
         try {
             $template->restore();
-    
+
             return response()->json([
                 'message' => 'Template successfully restored!',
             ], 200);

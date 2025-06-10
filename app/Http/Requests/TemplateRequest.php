@@ -19,7 +19,7 @@ class TemplateRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('templates', 'name')
+                Rule::unique('templates', 'name'),
             ],
             'body' => ['required'],
         ];

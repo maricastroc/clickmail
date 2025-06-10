@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Campaign;
 use App\Models\EmailList;
 use App\Models\Template;
-use App\Models\Campaign;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +15,7 @@ class CampaignSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 3; $i++) { 
+        for ($i = 0; $i < 3; $i++) {
             $emailList = EmailList::query()->inRandomOrder()->first();
             $template = Template::query()->inRandomOrder()->first();
             $user = User::query()->first();
